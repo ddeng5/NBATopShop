@@ -11,6 +11,7 @@ def removeHighestPrice(dictValues):
             highestPrice = value
     if (highestPrice != 0):
         dictValues.pop(highestPrice)
+    print('Popped: {}'.format(highestPrice))
 
 numberOfPricesToShow = sys.argv[1]
 cheapestListOrdered = {}
@@ -35,6 +36,7 @@ for element in options[1:]:
     price = details[2]
     price = price[1:]
     price = price.replace(",", "")
+    print("Trying serial number: ", serialNumber)
 
     if len(cheapestListOrdered) < int(numberOfPricesToShow):
         if (len(cheapestListOrdered) == 0):
@@ -49,16 +51,28 @@ for element in options[1:]:
                     cheapestListOrdered[price] = serialNumber
                     break
     elif len(cheapestListOrdered) == int(numberOfPricesToShow):
-        print("Trying serial number: ", serialNumber)
         for value, serial in cheapestListOrdered.items():
-            if (float(price) < float(value)):
-                cheapestListOrdered[price] = serialNumber
-                removeHighestPrice(cheapestListOrdered)
-                break
-            elif (float(price) == float(value)):
+            if price in cheapestListOrdered:
                 if (int(serialNumber) < int(serial)):
                     cheapestListOrdered[price] = serialNumber
                     break
+            else:
+                if (float(price) < float(value)):
+                    cheapestListOrdered[price] = serialNumber
+                    removeHighestPrice(cheapestListOrdered)
+                    break
+
+
+
+            # if (float(price) < float(value)):
+            #     cheapestListOrdered[price] = serialNumber
+            #     removeHighestPrice(cheapestListOrdered)
+            #     break
+            # elif (float(price) == float(value)):
+            #     print("Price: {} Dict Price: {} Price Serial: {} Dict Price Serial: {}".format(price, value, serialNumber, serial))
+            #     if (int(serialNumber) < int(serial)):
+            #         cheapestListOrdered[price] = serialNumber
+            #         break
 
 
 
