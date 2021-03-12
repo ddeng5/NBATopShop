@@ -6,13 +6,11 @@ from selenium import webdriver
 
 def removeHighestPrice(dictValues):
     highestPrice = 0
-    dictKey = 0
-    for key, value in dictValues.items():
-        if value > highestPrice:
+    for value, serial in dictValues.items():
+        if float(value) > float(highestPrice):
             highestPrice = value
-            dictKey = key
     if (highestPrice != 0):
-        dictValues.pop(dictKey)
+        dictValues.pop(highestPrice)
 
 numberOfPricesToShow = sys.argv[1]
 cheapestListOrdered = {}
@@ -31,6 +29,7 @@ for element in options[1:]:
     element = element.text
     details = element.split( )
     serialNumber = details[0]
+    serialNumber = serialNumber[1:]
 
     #cleanup price data to remove dollar sign
     price = details[2]
@@ -39,25 +38,53 @@ for element in options[1:]:
 
     if len(cheapestListOrdered) < int(numberOfPricesToShow):
         if (len(cheapestListOrdered) == 0):
-            cheapestListOrdered[serialNumber] = float(price)
-            print("added price: ", price)
+            cheapestListOrdered[price] = serialNumber
         else:
-            for num, value in cheapestListOrdered.items():
-                print(cheapestListOrdered)
-                if (float(price) < float(value)):
-                    print("num: %", num)
-                    print("priceeee: %", price)
-                    cheapestListOrdered[serialNumber] = float(price)
-                    print(cheapestListOrdered)
+            for value, serial in cheapestListOrdered.items():
+                if (float(price) == float(value)):
+                    if (int(serialNumber) < int(serial)):
+                        cheapestListOrdered[price] = serialNumber
+                        break
+                else:
+                    cheapestListOrdered[price] = serialNumber
                     break
     elif len(cheapestListOrdered) == int(numberOfPricesToShow):
         print("Trying serial number: ", serialNumber)
-        for num, value in cheapestListOrdered.items():
+        for value, serial in cheapestListOrdered.items():
             if (float(price) < float(value)):
+                cheapestListOrdered[price] = serialNumber
                 removeHighestPrice(cheapestListOrdered)
-                cheapestListOrdered[serialNumber] = float(price)
                 break
-print(cheapestListOrdered)
+            elif (float(price) == float(value)):
+                if (int(serialNumber) < int(serial)):
+                    cheapestListOrdered[price] = serialNumber
+                    break
+
+
+
+    # if len(cheapestListOrdered) < int(numberOfPricesToShow):
+    #     if (len(cheapestListOrdered) == 0):
+    #         cheapestListOrdered[serialNumber] = float(price)
+    #         print("added price: ", price)
+    #     else:
+    #         for num, value in cheapestListOrdered.items():
+    #             print(cheapestListOrdered)
+    #             if (float(price) < float(value)):
+    #                 print("num: %", num)
+    #                 print("priceeee: %", price)
+    #                 cheapestListOrdered[serialNumber] = float(price)
+    #                 print(cheapestListOrdered)
+    #                 break
+    # elif len(cheapestListOrdered) == int(numberOfPricesToShow):
+    #     print("Trying serial number: ", serialNumber)
+    #     for num, value in cheapestListOrdered.items():
+    #         if (float(price) < float(value)):
+    #             removeHighestPrice(cheapestListOrdered)
+    #             cheapestListOrdered[serialNumber] = float(price)
+    #             break
+
+for value, serial in sorted(cheapestListOrdered.items()):
+    print("Price: {} --- Serial Number: {}".format(value, serial))
             
 
 
