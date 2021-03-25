@@ -26,47 +26,51 @@ def open_connection():
 
 def addPlayers(playerObjs):
 	# playerObjs is a tuple of players in the format
-	# [player_id, name, guid]
+	# [guid, name,]
+	# TODO: check existence of player before inserting
 	conn = open_connection()
 	if conn:
 		cur = conn.cursor()
-		cur.executemany('INSERT INTO '+PLAYERS_TABLE+' VALUES (?,?,?)', playerObjs)
+		cur.executemany('INSERT INTO '+PLAYERS_TABLE+' VALUES (?,?)', playerObjs)
 		conn.commit()
 		conn.close()
 
 def addSets(setObjs):
 	# setObjs is a tuple of players in the format
-	# [setId, name, category, seriesNumber, guid]
+	# [guid, name, category, seriesNumber]
 	conn = open_connection()
 	if conn:
 		cur = conn.cursor()
-		cur.executemany('INSERT INTO '+SETS_TABLE+' VALUES (?,?,?,?,?)', setObjs)
+		cur.executemany('INSERT INTO '+SETS_TABLE+' VALUES (?,?,?,?)', setObjs)
 		conn.commit()
 		conn.close()
 		
 def addMoments(momentObjs):
 	# momentObjs is a tuple of players in the format
-	# [momentId, name, limited, circulationCount, playerId, setId, guid]
+	# [guid, name, limited, circulationCount, playerId, setId]
 	conn = open_connection()
 	if conn:
 		cur = conn.cursor()
-		cur.executemany('INSERT INTO '+MOMENTS_TABLE+' VALUES (?,?,?,?,?,?,?)', momentObjs)
+		cur.executemany('INSERT INTO '+MOMENTS_TABLE+' VALUES (?,?,?,?,?,?)', momentObjs)
 		conn.commit()
 		conn.close()
 		
 def addUsers(userObjs):
 	# userObjs is a tuple of players in the format
-	# [userId, username, guid]
+	# [guid, username]
 	conn = open_connection()
 	if conn:
 		cur = conn.cursor()
-		cur.executemany('INSERT INTO '+USERS_TABLE+' VALUES (?,?,?)', userObjs)
+		cur.executemany('INSERT INTO '+USERS_TABLE+' VALUES (?,?)', userObjs)
 		conn.commit()
 		conn.close()
 		
 def addTransactions(transactionObjs):
 	# transactionObjs is a tuple of players in the format
-	# [transactionId, momentId, buyerId, sellerId, price, updated]
+	# [guid, momentId, buyerId, sellerId, price, updated]
+	# TODO: add check. Look up last entry in db and only add new transactions that 
+	# dont include that entry (all the new ones). assumption: they are ordered 
+	# latest to oldest
 	conn = open_connection()
 	if conn:
 		cur = conn.cursor()
@@ -100,17 +104,17 @@ def setup():
 	
 if __name__ == '__main__':
 	setup()
-	addPlayers([(0, 'LeBron James', 'asdlkjasdf'),
-		(1, 'Kobe', 'lkjhkjhk')])
+	addPlayers([('asdlkjasdf', 'LeBron James'),
+		('lkjhkjhk', 'Kobe')])
 
-	addSets([(0, 'Series 1', 'Shoot', 1, 'asdfkjh'),
-		(1, 'Series 2', 'Save', 2, 'asdjkjhfkjh')])
+	addSets([('asdfkjh', 'Series 1', 'Shoot', 1),
+		('asdjkjhfkjh', 'Series 2', 'Save', 2)])
 
-	addMoments([(0, '3 pointer', True, 5000, 0, 0, 'jhfkjoskljh'),
-		(1, 'Save', False, 500000, 1, 1, 'jhflkkoskljh')])
+	addMoments([('jhfkjoskljh', '3 pointer', True, 5000, 'asdlkjasdf', 'asdfkjh'),
+		('jhflkkoskljh', 'Save', False, 500000, 'lkjhkjhk', 'asdjkjhfkjh')])
 
-	addUsers([(0, 'coolGuy69', 'sdlkjasd'),
-		(1, 'saveFace420', 'oookjhkhk')])
-	
-	addTransactions([(0, 0, 0, 1, 500.45, '2021-03-02 19:23:12'),
-		(1, 1, 1, 0, 79.13, '2021-01-02 09:34:11')])
+	addUsers([('sdlkjasd', 'coolGuy69'),
+		('oookjhkhk', 'saveFace420')])
+
+	addTransactions([('aa', 'jhfkjoskljh', 'sdlkjasd', 'oookjhkhk', 500.45, '2021-03-02 19:23:12'),
+		('bb', 'jhflkkoskljh', 'oookjhkhk', 'sdlkjasd', 79.13, '2021-01-02 09:34:11')])
